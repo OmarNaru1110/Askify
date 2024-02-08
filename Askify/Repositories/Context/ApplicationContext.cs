@@ -1,9 +1,10 @@
 ﻿using Askify.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Askify.Repositories.Context
 {
-    public class ApplicationContext:DbContext
+    public class ApplicationContext:IdentityDbContext<AppUser,AppRole,int>
     {
         public ApplicationContext(DbContextOptions options):base(options) { }
         protected override void OnModelCreating(ModelBuilder builder)
@@ -13,10 +14,13 @@ namespace Askify.Repositories.Context
                 e.ToTable("EndUsers");
                 e.HasKey(e => e.Id);
 
-                builder.Entity<EndUser>()
-                    .HasMany(u => u.Followers)
-                    .WithMany(u => u.Following)
-                    .UsingEntity(j => j.ToTable("UsersFollowers"));
+                e.HasMany(u => u.Followers)
+                .WithMany(u => u.Following)
+                .UsingEntity(j => j.ToTable("UsersFollowers"));
+
+                e.HasOne(x => x.IdentityUser)
+                .WithOne(x => x.EndUser)
+                .HasForeignKey<AppUser>(x => x.EndUserId);
 
             });
 

@@ -1,0 +1,22 @@
+﻿@model IEnumerable<AppUser>
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<br />
+<h2><strong>Users</strong></h2>
+<body style="background-color:#f5f5fd ">
+
+    <ul>
+    @foreach (var item in Model)
+    {
+        <li>
+            <h3>@item.UserName</h3>
+        </li>
+    }
+    </ul>
+
+</body>
+
+
