@@ -16,6 +16,11 @@ namespace Askify.Services
         {
             _enduserRepository = enduserRepository;
         }
+
+        public bool CheckIsFollowing(int anotherUserId)
+        {
+            return _enduserRepository.CheckIsFollowing(anotherUserId);
+        }
         public List<EndUser> GetFollowersList(int userId)
         {
             return _enduserRepository.GetFollowersList(userId);
@@ -46,6 +51,21 @@ namespace Askify.Services
             if (endUserId == null)
                 return null;
             return _enduserRepository.GetUserDetails(endUserId.Value);
+        }
+
+        public bool RemoveFollowing(int? anotherUserId)
+        {
+            if (anotherUserId == null)
+                return false;
+            
+            return _enduserRepository.RemoveFollowing(anotherUserId.Value);
+        }
+        public bool AddFollowing(int? anotherUserId)
+        {
+            if (anotherUserId == null)
+                return false;
+
+            return _enduserRepository.AddFollowing(anotherUserId.Value);
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using Askify.Models;
+using Askify.Repositories.IRepositories;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
-namespace Askify.Repositories.IRepositories
+namespace Askify.Repositories
 {
-    public class AccountRepository
+    public class AccountRepository:IAccountRepository
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<AppUser> _userManager;
@@ -23,5 +24,11 @@ namespace Askify.Repositories.IRepositories
             return user;
         }
 
+        public async Task<int?> GetCurrentEndUserId()
+        {
+            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            
+            return user == null ? null : user.EndUserId;
+        }
     }
 }

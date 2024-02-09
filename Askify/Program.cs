@@ -34,6 +34,8 @@ namespace Askify
                 .AddEntityFrameworkStores<ApplicationContext>();
             builder.Services.AddScoped<IEnduserService, EnduserService>();
             builder.Services.AddScoped<IEnduserRepository, EnduserRepository>();
+            builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
 
             var app = builder.Build();
 

@@ -8,13 +8,17 @@
         color: white;
         text-decoration: none;
     }
+
+    .unselectable {
+        user-select: none;
+    }
 </style>
 <div style="background-color:#6B6B6B">
     <center>
-        <div style="color:#FF9800">
+        <div class="unselectable" style="color:#FF9800">
             <h1 style="font-size:80px">@Model.EndUser.UserName</h1>
         </div>
-        <div style="color:white; font-size:20px">
+        <div class="unselectable" style="color:white; font-size:20px">
             <a class="profile-Details" target="_self" asp-action="GetFollowing" asp-controller="enduser" asp-route-endUserId="@Model.EndUser.Id">
                 <p style="display:inline-block; margin-right:20px">
                     @Model.FollowingCount <br />

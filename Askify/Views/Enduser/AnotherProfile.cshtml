@@ -1,5 +1,16 @@
 ﻿@model EndUserDetails
 @{
     ViewData["Title"] = Model.EndUser.UserName;
+
+    string buttonType = "btn-primary";
+    if (ViewData["isFollowing"].ToString() == "Unfollow")
+    {
+        buttonType = "btn-danger";
+    }
 }
 <partial name="Shared/_profileDetails" model="Model" />
+<div style="display: flex; width: 100%;">
+    <a asp-action="managefollow" asp-route-isFollowing="@ViewData["isFollowing"]" asp-route-endUserId="@Model.EndUser.Id" class="btn @buttonType" style="width: 100%;">
+        @ViewData["isFollowing"]
+    </a>
+</div>

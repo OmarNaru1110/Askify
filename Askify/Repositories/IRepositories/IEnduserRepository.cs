@@ -6,6 +6,9 @@ namespace Askify.Repositories.IRepositories
 {
     public interface IEnduserRepository
     {
+        public bool RemoveFollowing(int anotherUserId);
+        public bool AddFollowing(int anotherUserId);
+        public bool CheckIsFollowing(int anotherUserId);
         public List<EndUser> GetFollowingList(int userId);
         public List<EndUser> GetFollowersList(int userId);
         public EndUserDetails GetUserDetails(int endUserId);

@@ -1,6 +1,7 @@
 ﻿using Askify.Models;
 using Askify.Repositories.Context;
 using Askify.Repositories.IRepositories;
+using Askify.Services.IServices;
 using Askify.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Build.Framework;
@@ -12,9 +13,39 @@ namespace Askify.Repositories
     public class EnduserRepository : IEnduserRepository
     {
         private readonly ApplicationContext _context;
-        public EnduserRepository(ApplicationContext context)
+        private readonly IAccountService _accountService;
+
+        public EnduserRepository(
+            ApplicationContext context,
+            IAccountService accountService
+            )
         {
             _context = context;
+            _accountService = accountService;
+        }
+        public bool RemoveFollowing(int anotherUserId)
+        {
+            int? curUserId = _accountService.GetCurrentEndUserId();
+            if(curUserId==null) return false;
+            var curUser = _context.EndUsers.Include(x => x.Following).FirstOrDefault(c => c.Id == curUserId);
+            if(curUser==null) return false;
+            var anotherUser = GetById(anotherUserId);
+            if(anotherUser==null) return false;
+            curUser.Following.Remove(anotherUser);
+            Save();
+            return true;
+        }
+        public bool AddFollowing(int anotherUserId)
+        {
+            int? curUserId = _accountService.GetCurrentEndUserId();
+            if (curUserId == null) return false;
+            var curUser = _context.EndUsers.Include(x => x.Following).FirstOrDefault(c => c.Id == curUserId);
+            if (curUser == null) return false;
+            var anotherUser = GetById(anotherUserId);
+            if (anotherUser == null) return false;
+            curUser.Following.Add(anotherUser);
+            Save();
+            return true;
         }
         public List<EndUser> GetFollowersList(int userId)
         {
@@ -128,6 +159,14 @@ namespace Askify.Repositories
         public void Save()
         {
             _context.SaveChanges();
+        }
+
+        public bool CheckIsFollowing(int anotherUserId)
+        {
+            var myId = _accountService.GetCurrentEndUserId();
+            if(myId == null) 
+                return false;
+            return _context.EndUsers.Include(x => x.Following).FirstOrDefault(x => x.Id == myId).Following.Any(c => c.Id == anotherUserId);
         }
     }
 }

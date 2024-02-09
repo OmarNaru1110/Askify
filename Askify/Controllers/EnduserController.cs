@@ -9,14 +9,17 @@ namespace Askify.Controllers
     {
         private readonly IEnduserService _enduserService;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IAccountService _accountService;
 
         public EnduserController(
             IEnduserService enduserService,
-            UserManager<AppUser> userManager
+            UserManager<AppUser> userManager,
+            IAccountService accountService
             ) 
         {
             _enduserService = enduserService;
             _userManager = userManager;
+            _accountService = accountService;
         }
         public async Task<IActionResult> ToMyProfile()
         {
@@ -38,7 +41,7 @@ namespace Askify.Controllers
         {
             if(endUserId == null)
             {
-                return NotFound("user not fount");
+                return NotFound("user not found");
             }
 
             var user = _enduserService.GetById(endUserId);
@@ -48,7 +51,39 @@ namespace Askify.Controllers
             }
             var userDetails = _enduserService.GetDetails(user.Id);
             userDetails.EndUser = user;
+            var isFollowing = _enduserService.CheckIsFollowing(user.Id);
+            if (isFollowing == false)
+            {
+                ViewData["isFollowing"] = "Follow";
+            }
+            else
+            {
+                ViewData["isFollowing"] = "Unfollow";
+            }
+
             return View("AnotherProfile", userDetails);
+        }
+        public async Task<IActionResult> ManageFollow(int? endUserId, string? isFollowing)
+        {
+            if(isFollowing == null)
+            {
+                return NotFound("something went wrong");
+            }
+            if (endUserId == null)
+            {
+                return NotFound("user not found");
+            }
+            if(isFollowing == "Follow")
+            {
+                //add
+                _enduserService.AddFollowing(endUserId);
+            }
+            else
+            {
+                //remove
+                _enduserService.RemoveFollowing(endUserId);
+            }
+            return RedirectToAction("ToAnotherProfile", new { endUserId = endUserId });
         }
         public async Task<IActionResult> GetFollowing(int endUserId)
         {
