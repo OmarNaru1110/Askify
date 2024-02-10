@@ -26,25 +26,6 @@ namespace Askify.Repositories
             user.UserName= userName;
             Save();
         }
-        public void SendQuestion(Question question)
-        {
-            _context.EndUsers.Include(x=>x.SentQuestions).FirstOrDefault(x=>x.Id==question.SenderId).SentQuestions.Add(question);
-            Save();
-        }
-        public List<Question> GetInbox()
-        {
-            int? userId = _accountService.GetCurrentEndUserId();
-            if (userId == null)
-            {
-                return null;
-            }
-            var questions = _context.EndUsers
-                .Include(x => x.ReceivedQuestions)
-                .FirstOrDefault(x => x.Id == userId)
-                .ReceivedQuestions.Where(x => x.IsRepliedTo == false).ToList();
-
-            return questions;
-        }
         public bool RemoveFollowing(int anotherUserId)
         {
             int? curUserId = _accountService.GetCurrentEndUserId();

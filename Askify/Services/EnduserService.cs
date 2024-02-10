@@ -22,56 +22,6 @@ namespace Askify.Services
         {
             _enduserRepository.UpdateUserName(userId, userName);
         }
-        public bool SendQuestion(string? text, string? Anonymous, int receiverId)
-        {
-            var question = CreateQuestion(text, Anonymous, receiverId);
-            if (question == null)
-                return false;
-            _enduserRepository.SendQuestion(question);
-            return true;
-        }
-        public Question? CreateQuestion(string? text, string? Anonymous,int receiverId)
-        {
-            if(text== null) 
-                return null;
-
-            bool isAnonymous = false;
-
-            if (Anonymous != null)
-                isAnonymous = true;
-
-            int? senderId = _accountService.GetCurrentEndUserId();
-            if (senderId == null)
-            {
-                return null;
-            }
-
-            var question = new Question
-            {
-                Text = text,
-                CreatedDate = DateTime.Now,
-                SenderId = senderId.Value,
-                ReceiverId = receiverId,
-                IsAnonymous = isAnonymous,
-                IsRepliedTo = false
-            };
-            return question;
-        }
-        public List<QuestionVM> GetInbox()
-        {
-            var questions = _enduserRepository.GetInbox();
-            var inbox = new List<QuestionVM>();
-            foreach (var question in questions)
-            {
-                inbox.Add(new QuestionVM
-                {
-                    User = _enduserRepository.GetById(question.SenderId),
-                    Question = question
-                });
-            }
-
-            return inbox;
-        }
         public bool CheckIsFollowing(int anotherUserId)
         {
             return _enduserRepository.CheckIsFollowing(anotherUserId);
@@ -122,7 +72,6 @@ namespace Askify.Services
 
             return _enduserRepository.AddFollowing(anotherUserId.Value);
         }
-
 
     }
 }

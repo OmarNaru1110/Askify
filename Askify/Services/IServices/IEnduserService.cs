@@ -12,9 +12,6 @@ namespace Askify.Services.IServices
         public List<EndUser> GetFollowingList(int userId);
         public List<EndUser> GetFollowersList(int userId);
         public void UpdateUserName(int userId, string userName);
-        public Question? CreateQuestion(string? text, string? Anonymous, int receiverId);
-        public bool SendQuestion(string? text, string? Anonymous, int receiverId);
-        public List<QuestionVM> GetInbox();
         public EndUserDetails GetDetails(int? endUserId);
         public EndUser? GetById(int? id);
         public int? GetIdByUsername(string username);

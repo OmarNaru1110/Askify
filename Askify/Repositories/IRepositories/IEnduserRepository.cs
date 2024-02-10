@@ -7,8 +7,6 @@ namespace Askify.Repositories.IRepositories
     public interface IEnduserRepository
     {
         public void UpdateUserName(int userId, string userName);
-        public void SendQuestion(Question question);
-        public List<Question> GetInbox();
         public bool RemoveFollowing(int anotherUserId);
         public bool AddFollowing(int anotherUserId);
         public bool CheckIsFollowing(int anotherUserId);

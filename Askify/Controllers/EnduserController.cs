@@ -41,7 +41,7 @@ namespace Askify.Controllers
             if (result == false)
                 return BadRequest("something went wrong");
             
-            if(_enduserService.SendQuestion(text,Anonymous,receiverId) == false)
+            if(_questionService.SendQuestion(text,Anonymous,receiverId) == false)
             {
                 return BadRequest("something went wrong");
             }
@@ -52,7 +52,7 @@ namespace Askify.Controllers
         }
         public async Task<IActionResult> ToInbox()
         {
-            var inbox = _enduserService.GetInbox();
+            var inbox = _questionService.GetInbox();
             return View("inbox",inbox);
         }
         public async Task<IActionResult> ToMyProfile()
