@@ -11,16 +11,28 @@ namespace Askify.Controllers
         private readonly IEnduserService _enduserService;
         private readonly UserManager<AppUser> _userManager;
         private readonly IAccountService _accountService;
+        private readonly IQuestionService _questionService;
 
         public EnduserController(
             IEnduserService enduserService,
             UserManager<AppUser> userManager,
-            IAccountService accountService
+            IAccountService accountService,
+            IQuestionService questionService
             ) 
         {
             _enduserService = enduserService;
             _userManager = userManager;
             _accountService = accountService;
+            _questionService = questionService;
+        }
+        public async Task<IActionResult> DeleteQuestion(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound("question u want to delete wasn't found");
+            }
+            _questionService.Delete(id.Value);
+            return RedirectToAction("ToInbox");
         }
         public async Task<IActionResult> AskQuestion(string? text, string? Anonymous)
         {
@@ -33,7 +45,10 @@ namespace Askify.Controllers
             {
                 return BadRequest("something went wrong");
             }
-            return PartialView();
+            
+            TempData["questionSent"] = "true";
+
+            return RedirectToAction("ToAnotherProfile", new { endUserId = receiverId });
         }
         public async Task<IActionResult> ToInbox()
         {
@@ -54,6 +69,7 @@ namespace Askify.Controllers
             }
             var userDetails = _enduserService.GetDetails(user.Id);
             userDetails.EndUser = user;
+
             return View("Profile",userDetails);
         }
         public async Task<IActionResult> ToAnotherProfile(int? endUserId)
@@ -81,6 +97,9 @@ namespace Askify.Controllers
             }
 
             TempData["receiverId"] = endUserId;
+
+            if (TempData["questionSent"] != null)
+                ViewBag.questionSent = "true";
 
             return View("AnotherProfile", userDetails);
         }

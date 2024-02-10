@@ -36,6 +36,8 @@ namespace Askify
             builder.Services.AddScoped<IEnduserRepository, EnduserRepository>();
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
             builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+            builder.Services.AddScoped<IQuestionService, QuestionService>();
 
             var app = builder.Build();
 

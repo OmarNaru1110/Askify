@@ -63,7 +63,12 @@
         <br />
     </form>
 </div>
-
+<div style="background-color:#6B6B6B">
+    @if (ViewBag.questionSent != null)
+    {
+        <partial name="_AskQuestion" />
+    }
+</div>
 
 
 <script>

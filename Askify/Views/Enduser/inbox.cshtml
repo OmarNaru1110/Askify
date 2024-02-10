@@ -47,6 +47,17 @@
     .media-comment {
         margin-top:20px
     }
+
+    .delete-question {
+        color: red;
+        text-decoration: none;
+    }
+
+    .delete-question:hover {
+        color: red;
+        text-decoration: none;
+    }
+
 </style>
 <div class="list-group">
     @foreach (var user in Model)
@@ -83,6 +94,12 @@
                                         Reply
                                     </a>
                                 </li>
+                                <li style="margin-left:630px" class="list-inline-item mr-auto">
+                                    <a asp-action="DeleteQuestion" asp-route-id="@user.Question.Id" class="u-link-v5 g-color-danger g-color-primary--hover delete-question ">
+                                        <i class="fa fa-trash g-pos-rel g-top-1 g-mr-3"></i>
+                                        Delete
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -92,3 +109,4 @@
         </div>
     }
 </div>
+

@@ -20,6 +20,12 @@ namespace Askify.Repositories
             _context = context;
             _accountService = accountService;
         }
+        public void UpdateUserName(int userId, string userName)
+        {
+            var user = GetById(userId);
+            user.UserName= userName;
+            Save();
+        }
         public void SendQuestion(Question question)
         {
             _context.EndUsers.Include(x=>x.SentQuestions).FirstOrDefault(x=>x.Id==question.SenderId).SentQuestions.Add(question);

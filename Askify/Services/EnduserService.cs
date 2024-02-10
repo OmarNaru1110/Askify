@@ -13,13 +13,14 @@ namespace Askify.Services
         private readonly IEnduserRepository _enduserRepository;
         private readonly IAccountService _accountService;
 
-        public EnduserService(
-            IEnduserRepository enduserRepository,
-            IAccountService accountService
-            )
+        public EnduserService(IEnduserRepository enduserRepository,IAccountService accountService)
         {
             _enduserRepository = enduserRepository;
             _accountService = accountService;
+        }
+        public void UpdateUserName(int userId, string userName)
+        {
+            _enduserRepository.UpdateUserName(userId, userName);
         }
         public bool SendQuestion(string? text, string? Anonymous, int receiverId)
         {

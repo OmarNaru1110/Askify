@@ -136,7 +136,7 @@ namespace Askify.Controllers
                 return RedirectToAction(nameof(Login));
 
             var editUserModel = 
-                new EditVM { UserName = appUser?.UserName, Email = appUser?.Email };
+                new EditVM { UserName = appUser?.UserName };
 
             return View(editUserModel);
         }
@@ -155,22 +155,14 @@ namespace Askify.Controllers
                 }
                 return View(newUser);
             }
-
-            var user = await _userManager.FindByEmailAsync(newUser.Email);
-            if(user != null)
-            {
-                ModelState.AddModelError("", "email address already exists");
-                return View(newUser);
-            }
-
             var savedUser = await _userManager.GetUserAsync(User);
-
+            //edit in enduser ************
             savedUser.UserName = newUser.UserName;
-            savedUser.Email = newUser.Email;
 
             var result = await _userManager.UpdateAsync(savedUser);
             if (result.Succeeded)
             {
+                _enduserService.UpdateUserName(savedUser.EndUserId, newUser.UserName);
                 await _signInManager.RefreshSignInAsync(savedUser);
                 return RedirectToAction("index", "Home");
             }
