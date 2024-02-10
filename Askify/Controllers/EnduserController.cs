@@ -2,6 +2,7 @@
 using Askify.Services.IServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Plugins;
 
 namespace Askify.Controllers
 {
@@ -20,6 +21,24 @@ namespace Askify.Controllers
             _enduserService = enduserService;
             _userManager = userManager;
             _accountService = accountService;
+        }
+        public async Task<IActionResult> AskQuestion(string? text, string? Anonymous)
+        {
+            string ? receiverStr = TempData["receiverId"].ToString();
+            var result = int.TryParse(receiverStr, out int receiverId);
+            if (result == false)
+                return BadRequest("something went wrong");
+            
+            if(_enduserService.SendQuestion(text,Anonymous,receiverId) == false)
+            {
+                return BadRequest("something went wrong");
+            }
+            return PartialView();
+        }
+        public async Task<IActionResult> ToInbox()
+        {
+            var inbox = _enduserService.GetInbox();
+            return View("inbox",inbox);
         }
         public async Task<IActionResult> ToMyProfile()
         {
@@ -60,6 +79,8 @@ namespace Askify.Controllers
             {
                 ViewData["isFollowing"] = "Unfollow";
             }
+
+            TempData["receiverId"] = endUserId;
 
             return View("AnotherProfile", userDetails);
         }

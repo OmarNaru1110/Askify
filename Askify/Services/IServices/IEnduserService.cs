@@ -6,6 +6,9 @@ namespace Askify.Services.IServices
 {
     public interface IEnduserService
     {
+        public Question? CreateQuestion(string? text, string? Anonymous, int receiverId);
+        public bool SendQuestion(string? text, string? Anonymous, int receiverId);
+        public List<QuestionVM> GetInbox();
         public bool RemoveFollowing(int? anotherUserId);
         public bool AddFollowing(int? anotherUserId);
         public bool CheckIsFollowing(int anotherUserId);
