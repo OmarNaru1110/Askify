@@ -1,4 +1,5 @@
 ﻿using Askify.Models;
+using Askify.Repositories;
 using Askify.Repositories.IRepositories;
 using Askify.Services.IServices;
 using Askify.ViewModels;
@@ -18,9 +19,19 @@ namespace Askify.Services
             _enduserRepository = enduserRepository;
             _accountService = accountService;
         }
-        public void UpdateUserName(int userId, string userName)
+        public bool RemoveFollowing(int? anotherUserId)
         {
-            _enduserRepository.UpdateUserName(userId, userName);
+            if (anotherUserId == null)
+                return false;
+
+            return _enduserRepository.RemoveFollowing(anotherUserId.Value);
+        }
+        public bool AddFollowing(int? anotherUserId)
+        {
+            if (anotherUserId == null)
+                return false;
+
+            return _enduserRepository.AddFollowing(anotherUserId.Value);
         }
         public bool CheckIsFollowing(int anotherUserId)
         {
@@ -33,6 +44,10 @@ namespace Askify.Services
         public List<EndUser> GetFollowingList(int userId)
         {
             return _enduserRepository.GetFollowingList(userId);
+        }
+        public void UpdateUserName(int userId, string userName)
+        {
+            _enduserRepository.UpdateUserName(userId, userName);
         }
         public async Task<(AppUser?, IdentityResult)> Add(UserRegisterationVM user, UserManager<AppUser> userManager)
         {
@@ -58,20 +73,21 @@ namespace Askify.Services
             return _enduserRepository.GetUserDetails(endUserId.Value);
         }
 
-        public bool RemoveFollowing(int? anotherUserId)
+        public int GetFollowingCount(int endUserId)
         {
-            if (anotherUserId == null)
-                return false;
-            
-            return _enduserRepository.RemoveFollowing(anotherUserId.Value);
-        }
-        public bool AddFollowing(int? anotherUserId)
-        {
-            if (anotherUserId == null)
-                return false;
-
-            return _enduserRepository.AddFollowing(anotherUserId.Value);
+            return _enduserRepository.GetFollowingCount(endUserId);
         }
 
+        public int GetFollowersCount(int endUserId)
+        {
+            return _enduserRepository.GetFollowersCount(endUserId);
+        }
+
+        public List<EndUser>? Search(string? username)
+        {
+            if (username == null)
+                return null;
+            return _enduserRepository.Search(username);
+        }
     }
 }

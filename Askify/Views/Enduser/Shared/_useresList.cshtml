@@ -1,0 +1,18 @@
+﻿
+<div class="list-group">
+    @foreach (var user in Model)
+    {
+        if (User.Identity.Name == user.UserName)
+        {
+            <a class="list-group-item" asp-action="tomyprofile" asp-route-endUserId="@user.Id">
+                <h3>@user.UserName</h3>
+            </a>
+        }
+        else
+        {
+            <a class="list-group-item" asp-action="toanotherprofile" asp-route-endUserId="@user.Id">
+                <h3>@user.UserName</h3>
+            </a>
+        }
+    }
+</div>

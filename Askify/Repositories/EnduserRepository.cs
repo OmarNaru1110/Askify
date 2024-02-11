@@ -1,6 +1,7 @@
 ﻿using Askify.Models;
 using Askify.Repositories.Context;
 using Askify.Repositories.IRepositories;
+using Askify.Services;
 using Askify.Services.IServices;
 using Askify.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -15,25 +16,37 @@ namespace Askify.Repositories
         private readonly ApplicationContext _context;
         private readonly IAccountService _accountService;
 
-        public EnduserRepository( ApplicationContext context,IAccountService accountService)
+        public EnduserRepository( ApplicationContext context,
+            IAccountService accountService
+            )
         {
             _context = context;
             _accountService = accountService;
         }
-        public void UpdateUserName(int userId, string userName)
+        public bool CheckIsFollowing(int anotherUserId)
         {
-            var user = GetById(userId);
-            user.UserName= userName;
-            Save();
+            var myId = _accountService.GetCurrentEndUserId();
+            if (myId == null)
+                return false;
+            return _context.EndUsers.Include(x => x.Following).FirstOrDefault(x => x.Id == myId).Following.Any(c => c.Id == anotherUserId);
+        }
+        public List<EndUser> GetFollowersList(int userId)
+        {
+            return _context.EndUsers.Include(x => x.Followers).FirstOrDefault(x => x.Id == userId).Followers.ToList();
+
+        }
+        public List<EndUser> GetFollowingList(int userId)
+        {
+            return _context.EndUsers.Include(x => x.Following).FirstOrDefault(x => x.Id == userId).Following.ToList();
         }
         public bool RemoveFollowing(int anotherUserId)
         {
             int? curUserId = _accountService.GetCurrentEndUserId();
-            if(curUserId==null) return false;
+            if (curUserId == null) return false;
             var curUser = _context.EndUsers.Include(x => x.Following).FirstOrDefault(c => c.Id == curUserId);
-            if(curUser==null) return false;
+            if (curUser == null) return false;
             var anotherUser = GetById(anotherUserId);
-            if(anotherUser==null) return false;
+            if (anotherUser == null) return false;
             curUser.Following.Remove(anotherUser);
             Save();
             return true;
@@ -50,16 +63,6 @@ namespace Askify.Repositories
             Save();
             return true;
         }
-        public List<EndUser> GetFollowersList(int userId)
-        {
-            return _context.EndUsers.Include(x => x.Followers).FirstOrDefault(x => x.Id == userId).Followers.ToList();
-
-        }
-        public List<EndUser> GetFollowingList(int userId)
-        {
-            return _context.EndUsers.Include(x => x.Following).FirstOrDefault(x=>x.Id==userId).Following.ToList();
-        }
-
         public int GetFollowersCount(int endUserId)
         {
             EndUser? user = _context.EndUsers
@@ -75,7 +78,7 @@ namespace Askify.Repositories
         public int GetFollowingCount(int endUserId)
         {
             EndUser? user = _context.EndUsers
-                 .Include(u => u.Following) 
+                 .Include(u => u.Following)
                  .FirstOrDefault(x => x.Id == endUserId);
             if (user != null)
             {
@@ -83,7 +86,13 @@ namespace Askify.Repositories
                 return followingCount;
             }
             return 0;
-        }   
+        }
+        public void UpdateUserName(int userId, string userName)
+        {
+            var user = GetById(userId);
+            user.UserName= userName;
+            Save();
+        }
         public int GetAnswersCount(int endUserId)
         {
             EndUser? user = _context.EndUsers
@@ -164,12 +173,9 @@ namespace Askify.Repositories
             _context.SaveChanges();
         }
 
-        public bool CheckIsFollowing(int anotherUserId)
+        public List<EndUser>? Search(string username)
         {
-            var myId = _accountService.GetCurrentEndUserId();
-            if(myId == null) 
-                return false;
-            return _context.EndUsers.Include(x => x.Following).FirstOrDefault(x => x.Id == myId).Following.Any(c => c.Id == anotherUserId);
+            return _context.EndUsers.Where(x=>x.UserName.ToLower().StartsWith(username.ToLower())).ToList(); 
         }
     }
 }

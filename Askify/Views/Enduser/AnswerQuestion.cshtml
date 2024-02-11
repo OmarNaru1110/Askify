@@ -1,0 +1,107 @@
+﻿@model AnswerQuestionVm
+@{
+    ViewData["Title"] = "AnswerQuestion";
+    var q = ViewBag.question as Question;
+}
+<style>
+    @@media (min-width: 0) {
+        .g-pa-30 {
+            padding: 2.14286rem !important;
+        }
+    }
+
+    @@media (min-width: 0) {
+        .g-mr-15 {
+            margin-right: 1.07143rem !important;
+        }
+    }
+
+    @@media (min-width: 0) {
+        .g-mt-3 {
+            margin-top: 0.21429rem !important;
+        }
+    }
+
+
+    .g-height-50 {
+        height: 50px;
+    }
+
+    .g-width-50 {
+        width: 50px !important;
+    }
+
+    .g-bg-secondary {
+        background-color: #fafafa !important;
+    }
+
+    .u-shadow-v18 {
+        box-shadow: 0 5px 10px -6px rgba(0, 0, 0, 0.15);
+    }
+
+    .g-color-gray-dark-v4 {
+        color: #777 !important;
+    }
+
+    .g-font-size-12 {
+        font-size: 0.85714rem !important;
+    }
+
+    .media-comment {
+        margin-top: 20px
+    }
+
+    .delete-question {
+        color: red;
+        text-decoration: none;
+    }
+
+        .delete-question:hover {
+            color: red;
+            text-decoration: none;
+        }
+
+</style>
+<div class="list-group">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="media g-mb-30 media-comment">
+                        <div class="media-body u-shadow-v18 g-bg-secondary g-pa-30">
+                            <div class="g-mb-15">
+                                @if (q.IsAnonymous)
+                                {
+                                    <h5 class="h5 g-color-gray-dark-v1 mb-0">
+                                        Anonymous
+                                    </h5>
+                                }
+                                else
+                                {
+                                    <h5 class="h5 g-color-gray-dark-v1 mb-0">
+                                        @q.Sender.UserName
+                                    </h5>
+                                }
+                                <span class="g-color-gray-dark-v4 g-font-size-12"> @q.CreatedDate </span>
+                            </div>
+                            <p>
+                                @q.Text
+                            </p>
+                        </div>
+                    </div>
+                <form asp-controller="enduser" asp-action="AnswerQuestion" class="w-100" method="post">
+                    <textarea required asp-for="AnswerText" style="resize:none; height: 150px;" placeholder="Answer Here..." class="form-control"></textarea>
+                    <input hidden asp-for="QuestionId" value="@q.Id" />
+                    <input hidden asp-for="AnswerReceiverId" value="@q.SenderId" />
+
+                    <div class="mt-3">
+                        <input class="btn btn-warning" type="submit" value="Answer" />
+                    </div>
+                    <br />
+                    <br />
+                </form>
+                </div>
+            </div>
+    </div>
+</div>
+

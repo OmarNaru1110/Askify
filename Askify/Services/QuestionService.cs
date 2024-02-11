@@ -21,6 +21,7 @@ namespace Askify.Services
             _accountService = accountService;
             _enduserService = enduserService;
         }
+
         public void Delete(int questionId)
         {
             _questionRepository.Delete(questionId);
@@ -74,6 +75,18 @@ namespace Askify.Services
             }
 
             return inbox;
+        }
+
+        public Question? CreateQuestionWithSenderIncluded(int? questionId)
+        {
+            if(questionId == null) 
+                return null;
+            return _questionRepository.CreateQuestionWithSenderIncluded(questionId);
+        }
+
+        public bool AnswerQuestion(int questionId)
+        {
+            return _questionRepository.AnswerQuestion(questionId);
         }
     }
 }

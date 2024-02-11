@@ -1,0 +1,147 @@
+﻿@{
+    var answers = ViewBag.myAnswers as List<Answer>;
+}
+<style>
+    @@media (min-width: 0) {
+        .g-pa-30 {
+            padding: 2.14286rem !important;
+        }
+    }
+
+    @@media (min-width: 0) {
+        .g-mr-15 {
+            margin-right: 1.07143rem !important;
+        }
+    }
+
+    @@media (min-width: 0) {
+        .g-mt-3 {
+            margin-top: 0.21429rem !important;
+        }
+    }
+
+
+    .g-height-50 {
+        height: 50px;
+    }
+
+    .g-width-50 {
+        width: 50px !important;
+    }
+
+    .g-bg-secondary {
+        background-color: #6B6B6B !important;
+    }
+
+    .u-shadow-v18 {
+        box-shadow: 0 5px 10px -6px rgba(0, 0, 0, 0.15);
+    }
+
+    .g-font-size-12 {
+        font-size: 0.85714rem !important;
+    }
+
+    .media-comment {
+        margin-top: 20px;
+        width:150%
+    }
+
+    .delete-question {
+        color: red;
+        text-decoration: none;
+    }
+
+        .delete-question:hover {
+            color: red;
+            text-decoration: none;
+        }
+
+    .profile-Answers {
+        color: inherit;
+        text-decoration: none;
+    }
+
+        .profile-Answers:hover {
+            color: inherit;
+            text-decoration: none;
+        }
+
+</style>
+@if (answers != null)
+{
+
+    @foreach (var answer in answers)
+    {
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="media g-mb-30 media-comment">
+                        <div class="media-body u-shadow-v18 g-bg-secondary g-pa-30">
+                            <div class="g-mb-15">
+                                <p>
+                                    @if (answer.Question.IsAnonymous)
+                                    {
+                                        <h5 class="h5 mb-0" style="color:#FF4F4F">
+                                            Anonymous
+                                        </h5>
+                                    }
+                                    else
+                                    {
+                                        if(answer.Receiver.UserName == User.Identity.Name)
+                                        {
+                                            <a class="profile-Answers" asp-action="tomyprofile">
+                                                <h5 class="h5 mb-0" style="color:#FF4F4F">
+                                                    @answer.Receiver.UserName
+                                                </h5>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a class="profile-Answers " asp-action="toanotherprofile" asp-route-endUserId="@answer.Receiver.Id">
+                                                <h5 class="h5 mb-0" style="color:#FF4F4F">
+                                                    @answer.Receiver.UserName
+                                                </h5>
+                                            </a>
+                                        }
+                                    }
+                                    <span style="color:white" class="g-font-size-12"> @answer.Question.CreatedDate </span>
+                                </p>
+                            </div>
+                            <p style="color:white" >
+                                @answer.Question.Text
+                            </p>
+                        </div>
+                        <div class="media-body u-shadow-v18 g-bg-secondary g-pa-30">
+                            <div class="g-mb-15">
+                                <p>
+                                    @if(answer.Sender.UserName == User.Identity.Name)
+                                    {
+                                        <a class="profile-Answers" asp-action="tomyprofile">
+                                            <span class="h5 mb-0" style="color:#80FF4E">
+                                                @answer.Sender.UserName
+                                            </span>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="profile-Answers " asp-action="toanotherprofile" asp-route-endUserId="@answer.Sender.Id">
+                                            <span class="h5 mb-0" style="color:#80FF4E">
+                                                @answer.Sender.UserName
+                                            </span>
+                                        </a>
+                                    }
+                                    <br />
+                                    <span style="color:white" class="g-font-size-12"> @answer.CreatedDate </span>
+                                </p>
+                            </div>
+                            <p style="color:white">
+                                @answer.Text
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+}

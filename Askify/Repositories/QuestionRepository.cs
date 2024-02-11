@@ -57,5 +57,20 @@ namespace Askify.Repositories
             _context.EndUsers.Include(x => x.SentQuestions).FirstOrDefault(x => x.Id == question.SenderId).SentQuestions.Add(question);
             Save();
         }
+
+        public Question? CreateQuestionWithSenderIncluded(int? questionId)
+        {
+            return _context.Questions.Include(x=>x.Sender).FirstOrDefault(x=>x.Id== questionId);
+        }
+
+        public bool AnswerQuestion(int questionId)
+        {
+            var question = GetById(questionId);
+            if (question == null)
+                return false;
+            question.IsRepliedTo =true;
+            Save();
+            return true;
+        }
     }
 }

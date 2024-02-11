@@ -89,12 +89,12 @@
 
                             <ul class="list-inline d-sm-flex my-0">
                                 <li class="list-inline-item ml-auto">
-                                    <a class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover" href="#!">
+                                    <a asp-route-questionId="@user.Question.Id" asp-action="AnswerQuestion" class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover">
                                         <i class="fa fa-reply g-pos-rel g-top-1 g-mr-3"></i>
-                                        Reply
+                                        Answer
                                     </a>
                                 </li>
-                                <li style="margin-left:630px" class="list-inline-item mr-auto">
+                                <li style="margin-left:625px" class="list-inline-item mr-auto">
                                     <a asp-action="DeleteQuestion" asp-route-id="@user.Question.Id" class="u-link-v5 g-color-danger g-color-primary--hover delete-question ">
                                         <i class="fa fa-trash g-pos-rel g-top-1 g-mr-3"></i>
                                         Delete

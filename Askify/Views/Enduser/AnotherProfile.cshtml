@@ -1,7 +1,7 @@
 ﻿@model EndUserDetails
 @{
     ViewData["Title"] = Model.EndUser.UserName;
-
+    var answers = ViewBag.myAnswers as List<Answer>;
     string buttonType = "btn-primary";
     if (ViewData["isFollowing"].ToString() == "Unfollow")
     {
@@ -26,8 +26,8 @@
         }
 
     .char-counter {
-        position: fixed;
-        left:125px;
+        position:absolute;
+        left:10px;
         color: white; /* Adjust the color as needed */
         font-size: 14px; /* Adjust the font size as needed */
     }
@@ -69,7 +69,9 @@
         <partial name="_AskQuestion" />
     }
 </div>
-
+<br />
+<partial name="Shared/_searchBoxAnswer" model="Model.EndUser.Id" />
+<partial name="Shared/_profileAnswers" model="answers" />
 
 <script>
     // Add JavaScript to update character count

@@ -1,5 +1,6 @@
 ﻿using Askify.Models;
 using Askify.Services.IServices;
+using Askify.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Plugins;
@@ -12,19 +13,69 @@ namespace Askify.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IAccountService _accountService;
         private readonly IQuestionService _questionService;
+        private readonly IAnswerService _answerService;
+        private readonly ITimelineService _timelineService;
 
         public EnduserController(
             IEnduserService enduserService,
             UserManager<AppUser> userManager,
             IAccountService accountService,
-            IQuestionService questionService
+            IQuestionService questionService,
+            IAnswerService answerService,
+            ITimelineService timelineService
             ) 
         {
             _enduserService = enduserService;
             _userManager = userManager;
             _accountService = accountService;
             _questionService = questionService;
+            _answerService = answerService;
+            _timelineService = timelineService;
         }
+        public async Task<IActionResult> Index()
+        {
+            if(User.Identity.IsAuthenticated)
+                return RedirectToAction("ToTimeline");
+
+            return RedirectToAction("index", "home");
+        }
+        public async Task<IActionResult> SearchAnswer(string? answerText, int? endUserId)
+        {
+            ViewBag.myAnswers = _answerService.SearchAnswers(answerText,endUserId);
+            return View();
+        }
+        public async Task<IActionResult> SearchUser(string username)
+        {
+            var users = new List<EndUser>();
+            users = _enduserService.Search(username);
+            return View(users);
+        }
+        public async Task<IActionResult> ToTimeline()
+        {
+            var userId=_accountService.GetCurrentEndUserId();
+            if (userId == null)
+                return RedirectToAction("index", "home");
+
+            var timeline = _timelineService.GetFollowingAnswers(userId.Value);
+            ViewBag.myAnswers = timeline;
+            return View("Timeline");
+        }
+        public async Task<IActionResult> ToAnswer(int? answerId)
+        {
+            if (answerId == null)
+                return NotFound("Answer not found");
+            var answer = _answerService.Edit(answerId);
+            if (answer == null)
+                return NotFound("Answer not found");
+            return View(answer);
+        }
+        public async Task<IActionResult> ToNotifications()
+        {
+            
+            var notifications = _answerService.GetNotifications();
+            return View("Notification",notifications);
+        }
+
         public async Task<IActionResult> DeleteQuestion(int? id)
         {
             if (id == null)
@@ -32,6 +83,24 @@ namespace Askify.Controllers
                 return NotFound("question u want to delete wasn't found");
             }
             _questionService.Delete(id.Value);
+            return RedirectToAction("ToInbox");
+        }
+        [HttpGet]
+        public async Task<IActionResult> AnswerQuestion(int? questionId)
+        {
+            var question = _questionService.CreateQuestionWithSenderIncluded(questionId);
+            if (question == null)
+            {
+                return RedirectToAction("ToInbox");
+            }
+            ViewBag.question = question;
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AnswerQuestion(AnswerQuestionVm answer)
+        {
+            var result = _answerService.Add(answer);
             return RedirectToAction("ToInbox");
         }
         public async Task<IActionResult> AskQuestion(string? text, string? Anonymous)
@@ -70,6 +139,9 @@ namespace Askify.Controllers
             var userDetails = _enduserService.GetDetails(user.Id);
             userDetails.EndUser = user;
 
+            var myAnswers = _answerService.GetUserAnswers(user.Id);
+            ViewBag.myAnswers = myAnswers;
+
             return View("Profile",userDetails);
         }
         public async Task<IActionResult> ToAnotherProfile(int? endUserId)
@@ -101,6 +173,8 @@ namespace Askify.Controllers
             if (TempData["questionSent"] != null)
                 ViewBag.questionSent = "true";
 
+            var myAnswers = _answerService.GetUserAnswers(endUserId.Value);
+            ViewBag.myAnswers = myAnswers;
             return View("AnotherProfile", userDetails);
         }
         public async Task<IActionResult> ManageFollow(int? endUserId, string? isFollowing)

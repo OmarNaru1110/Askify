@@ -1,0 +1,8 @@
+﻿@model List<Answer>
+@{
+    ViewData["Title"] = "Timeline";
+    var answers = ViewBag.myAnswers as List<Answer>;
+}
+
+<partial name="Shared/_searchBoxUser" />
+<partial name="Shared/_profileAnswers" model="Model" />

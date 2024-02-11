@@ -38,6 +38,10 @@ namespace Askify
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
             builder.Services.AddScoped<IQuestionService, QuestionService>();
+            builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
+            builder.Services.AddScoped<IAnswerService, AnswerService>();
+            builder.Services.AddScoped<ITimelineRepository, TimelineRepository>();
+            builder.Services.AddScoped<ITimelineService, TimelineService>();
 
             var app = builder.Build();
 
@@ -59,7 +63,7 @@ namespace Askify
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=enduser}/{action=Index}/{id?}");
 
             using (var scope = app.Services.CreateScope())
             {
