@@ -18,7 +18,7 @@ namespace Askify.Repositories
             _accountService = accountService;
         }
 
-        public List<Answer>? GetUserAnswers(int endUserId)
+        public List<Answer>? GetUserAnswers(int endUserId, int page, int size)
         {
             return _context.Answers
                   .Where(x => x.SenderId == endUserId)
@@ -26,6 +26,7 @@ namespace Askify.Repositories
                   .Include(x => x.Receiver)
                   .Include(x => x.Question)
                   .OrderByDescending(x => x.CreatedDate)
+                  .Skip((page-1) * size).Take(size)
                   .ToList();
         }
         public void Add(Answer answer)

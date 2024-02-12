@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = User.Identity.Name;
     var answers = ViewBag.myAnswers as List<Answer>;
+    var pages = ViewBag.pages as List<int>;
+
 }
 
 <style>
@@ -23,3 +25,25 @@
 <br />
 <partial name="Shared/_searchBoxAnswer" model="Model.EndUser.Id" />
 <partial name="Shared/_profileAnswers" model="answers" />
+<br />
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        
+        @foreach(var item in pages)
+        {
+            if ((int)ViewBag.pageNumber == item)
+            {
+                <li class="page-item active">
+                    <a asp-action="tomyprofile" asp-route-page="@item" class="page-link">@item</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a asp-action="tomyprofile" asp-route-page="@item" class="page-link">@item</a>
+                </li>
+            }
+        }
+
+    </ul>
+</nav>

@@ -71,34 +71,66 @@
         if (answer.IsSeen == true)
         {
             isSeenColor = "background-color: #fafafa !important;";
-        }
-        <a class="answer-page" asp-action="ToAnswer" asp-route-answerId="@answer.Id" >
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="media g-mb-30 media-comment">
-                            <div style="@isSeenColor" class="media-body u-shadow-v18 g-pa-30">
-                                <div class="g-mb-15">
+            <a class="answer-page" asp-action="ToAnswer" asp-route-answerId="@answer.Id">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="media g-mb-30 media-comment">
+                                <div style="@isSeenColor" class="media-body u-shadow-v18 g-pa-30">
+                                    <div class="g-mb-15">
+                                        <p>
+                                            <span class="h5 g-color-gray-dark-v1 mb-0">
+                                                @answer.Sender.UserName
+                                            </span>
+                                            <span class="g-color-gray-dark-v1 mb-0">
+                                                Answered your question
+                                            </span>
+                                            <br />
+                                            <span class="g-color-gray-dark-v4 g-font-size-12"> @answer.CreatedDate </span>
+                                        </p>
+                                    </div>
                                     <p>
-                                        <span class="h5 g-color-gray-dark-v1 mb-0">
-                                            @answer.Sender.UserName
-                                        </span>
-                                        <span class="g-color-gray-dark-v1 mb-0">
-                                            Answered your question
-                                        </span>
-                                        <br />
-                                        <span class="g-color-gray-dark-v4 g-font-size-12"> @answer.CreatedDate </span>
+                                        @answer.Question.Text
                                     </p>
                                 </div>
-                                <p>
-                                    @answer.Question.Text
-                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        }
+        else
+        {
+            isSeenColor = "background-color: #F1F8FF  !important;";
+            <a class="answer-page" asp-action="ToAnswer" asp-route-answerId="@answer.Id">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="media g-mb-30 media-comment">
+                                <div style="@isSeenColor" class="media-body u-shadow-v18 g-pa-30">
+                                    <div class="g-mb-15">
+                                        <p>
+                                            <span class="h5 g-color-gray-dark-v1 mb-0">
+                                                @answer.Sender.UserName
+                                            </span>
+                                            <span class="g-color-gray-dark-v1 mb-0">
+                                                Answered your question
+                                            </span>
+                                            <br />
+                                            <span class="g-color-gray-dark-v4 g-font-size-12"> @answer.CreatedDate </span>
+                                        </p>
+                                    </div>
+                                    <p>
+                                        @answer.Question.Text
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        }
+
     }
 </div>
 

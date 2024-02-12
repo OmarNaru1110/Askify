@@ -1,4 +1,5 @@
 ﻿using Askify.Models;
+using Askify.Services;
 using Askify.Services.IServices;
 using Askify.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -50,14 +51,22 @@ namespace Askify.Controllers
             users = _enduserService.Search(username);
             return View(users);
         }
-        public async Task<IActionResult> ToTimeline()
+        public async Task<IActionResult> ToTimeline(int page = 1)
         {
             var userId=_accountService.GetCurrentEndUserId();
             if (userId == null)
                 return RedirectToAction("index", "home");
 
-            var timeline = _timelineService.GetFollowingAnswers(userId.Value);
+            //pagination
+            int pageSize = HelperService.GetPageSize();
+            int numberOfPages = HelperService.GetNumberOfPages();
+            var timeline = _timelineService.GetFollowingAnswers(userId.Value, page, pageSize);
+            var TotalAnswersCount = _timelineService.GetTimelineAnswersCount(userId.Value);
+
             ViewBag.myAnswers = timeline;
+            ViewBag.pageNumber = page;
+            ViewBag.pages = HelperService.Paginate(page, pageSize, numberOfPages, TotalAnswersCount);
+
             return View("Timeline");
         }
         public async Task<IActionResult> ToAnswer(int? answerId)
@@ -124,7 +133,7 @@ namespace Askify.Controllers
             var inbox = _questionService.GetInbox();
             return View("inbox",inbox);
         }
-        public async Task<IActionResult> ToMyProfile()
+        public async Task<IActionResult> ToMyProfile(int page = 1)
         {
             var appUser = await _userManager.GetUserAsync(User);
             if(appUser == null )
@@ -139,12 +148,19 @@ namespace Askify.Controllers
             var userDetails = _enduserService.GetDetails(user.Id);
             userDetails.EndUser = user;
 
-            var myAnswers = _answerService.GetUserAnswers(user.Id);
+            //pagination
+            int pageSize = HelperService.GetPageSize();
+            int numberOfPages = HelperService.GetNumberOfPages();
+            var myAnswers = _answerService.GetUserAnswers(user.Id, page, pageSize);
+            var TotalAnswersCount = _answerService.GetUserAnswersCount(user.Id);
+
             ViewBag.myAnswers = myAnswers;
+            ViewBag.pageNumber = page;
+            ViewBag.pages = HelperService.Paginate(page, pageSize, numberOfPages, TotalAnswersCount);
 
             return View("Profile",userDetails);
         }
-        public async Task<IActionResult> ToAnotherProfile(int? endUserId)
+        public async Task<IActionResult> ToAnotherProfile(int? endUserId, int page=1)
         {
             if(endUserId == null)
             {
@@ -173,8 +189,16 @@ namespace Askify.Controllers
             if (TempData["questionSent"] != null)
                 ViewBag.questionSent = "true";
 
-            var myAnswers = _answerService.GetUserAnswers(endUserId.Value);
+            //pagination
+            int pageSize = HelperService.GetPageSize();
+            int numberOfPages = HelperService.GetNumberOfPages();
+            var myAnswers = _answerService.GetUserAnswers(user.Id, page, pageSize);
+            var TotalAnswersCount = _answerService.GetUserAnswersCount(endUserId);
+
             ViewBag.myAnswers = myAnswers;
+            ViewBag.pageNumber = page;
+            ViewBag.pages = HelperService.Paginate(page, pageSize, numberOfPages, TotalAnswersCount);
+
             return View("AnotherProfile", userDetails);
         }
         public async Task<IActionResult> ManageFollow(int? endUserId, string? isFollowing)

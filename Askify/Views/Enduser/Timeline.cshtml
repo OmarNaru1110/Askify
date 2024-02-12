@@ -2,7 +2,34 @@
 @{
     ViewData["Title"] = "Timeline";
     var answers = ViewBag.myAnswers as List<Answer>;
+    var pages = ViewBag.pages as List<int>;
+    var pageNumber = (int) ViewBag.pageNumber;
 }
 
 <partial name="Shared/_searchBoxUser" />
 <partial name="Shared/_profileAnswers" model="Model" />
+<br />
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+
+        @foreach (var item in pages)
+        {
+            if ((int)ViewBag.pageNumber == item)
+            {
+                <li class="page-item active">
+                    <a asp-action="ToTimeline" asp-route-page="@item" class="page-link">@item</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a asp-action="ToTimeline"asp-route-page="@item" class="page-link">@item</a>
+                </li>
+            }
+        }
+
+    </ul>
+</nav>
+
+
+

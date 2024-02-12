@@ -12,20 +12,23 @@ namespace Askify.Services
         private readonly IAnswerRepository _answerRepository;
         private readonly IAccountService _accountService;
         private readonly IQuestionService _questionService;
+        private readonly IEnduserRepository _enduserRepository;
 
         public AnswerService(IAnswerRepository answerRepository, 
             IAccountService accountService,
-            IQuestionService questionService)
+            IQuestionService questionService,
+            IEnduserRepository enduserRepository)
         {
             _answerRepository = answerRepository;
             _accountService = accountService;
             _questionService = questionService;
+            _enduserRepository = enduserRepository;
         }
-        public List<Answer>? GetUserAnswers(int? endUserId)
+        public List<Answer>? GetUserAnswers(int? endUserId, int page, int size)
         {
             if (endUserId == null)
                 return null;
-            return _answerRepository.GetUserAnswers(endUserId.Value);
+            return _answerRepository.GetUserAnswers(endUserId.Value, page, size);
         }
         public bool Add(AnswerQuestionVm obj)
         {
@@ -78,6 +81,11 @@ namespace Askify.Services
                 return new List<Answer>();
             var searchResult = _answerRepository.SearchAnswers(answerText, endUserId.Value);
             return searchResult == null ? new List<Answer>() : searchResult;
+        }
+
+        public int GetUserAnswersCount(int? endUserId)
+        {
+            return endUserId==null? 0 : _enduserRepository.GetAnswersCount(endUserId.Value);
         }
     }
 }
