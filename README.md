@@ -22,11 +22,11 @@ Wait for it...
 
 Here are some screenshots from Askify:
 
-<img title="a title" alt="Alt text" src="/images/1.png">
-<img title="a title" alt="Alt text" src="/images/2.png">
-<img title="a title" alt="Alt text" src="/images/3.png">
-<img title="a title" alt="Alt text" src="/images/4.png">
-<img title="a title" alt="Alt text" src="/images/5.png">
+<img title="a title" alt="Alt text" src="/Askify/images/timeline.png">
+<img title="a title" alt="Alt text" src="/Askify/images/2.png">
+<img title="a title" alt="Alt text" src="/Askify/images/3.png">
+<img title="a title" alt="Alt text" src="/Askify/images/4.png">
+<img title="a title" alt="Alt text" src="/Askify/images/5.png">
 
 ## Technologies Used
 
