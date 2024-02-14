@@ -13,16 +13,20 @@ namespace Askify.Services
         private readonly IAccountService _accountService;
         private readonly IQuestionService _questionService;
         private readonly IEnduserRepository _enduserRepository;
+        private readonly INotificationService _notificationService;
+        private readonly INotificationRepository _notificationRepository;
 
         public AnswerService(IAnswerRepository answerRepository, 
             IAccountService accountService,
             IQuestionService questionService,
-            IEnduserRepository enduserRepository)
+            IEnduserRepository enduserRepository,
+            INotificationService notificationService)
         {
             _answerRepository = answerRepository;
             _accountService = accountService;
             _questionService = questionService;
             _enduserRepository = enduserRepository;
+            _notificationService = notificationService;
         }
         public List<Answer>? GetUserAnswers(int? endUserId, int page, int size)
         {
@@ -52,6 +56,18 @@ namespace Askify.Services
                 return false;
 
             _answerRepository.Add(answer);
+            _notificationService.Send(answer.Id, answer.ReceiverId);
+            
+            //send notification to the parent as well
+            var question = _questionService.GetQuestion(obj.QuestionId);
+            if(question!=null && question.ParentQuestionId != null)
+            {
+                var parentQuestion = _questionService.GetQuestion(question.ParentQuestionId);
+                if (parentQuestion != null)
+                {
+                    _notificationService.Send(answer.Id, parentQuestion.SenderId);
+                }
+            }
             return true;
         }
 
@@ -65,14 +81,6 @@ namespace Askify.Services
             answer.IsSeen = true;
             _answerRepository.Save();
             return answer;
-        }
-
-        public List<Answer>? GetNotifications()
-        {
-            int? endUserId = _accountService.GetCurrentEndUserId();
-            if (endUserId == null)
-                return null;
-            return _answerRepository.GetNotifications(endUserId.Value);
         }
 
         public List<Answer> SearchAnswers(string? answerText, int? endUserId)

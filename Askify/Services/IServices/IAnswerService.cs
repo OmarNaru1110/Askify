@@ -9,7 +9,6 @@ namespace Askify.Services.IServices
         public List<Answer>? GetUserAnswers(int? endUserId, int page, int size);
         public int GetUserAnswersCount(int? endUserId);
         public Answer? Edit(int? answerId);
-        public List<Answer>? GetNotifications();
         public bool Add(AnswerQuestionVm obj);
     }
 }

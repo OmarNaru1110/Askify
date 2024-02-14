@@ -47,7 +47,7 @@ namespace Askify.Controllers
                 if (result.Item2.Succeeded && result.Item1 != null)
                 {
                     await _signInManager.SignInAsync(result.Item1, isPersistent: false);
-                    return RedirectToAction("tomyprofile", "enduser");
+                    return RedirectToAction("ToTimeline", "enduser");
                 }
                 foreach(var error in result.Item2.Errors)
                 {
@@ -58,39 +58,6 @@ namespace Askify.Controllers
             return View("Registeration", newUser);
         }
 
-        //[HttpGet]
-        //public IActionResult RegisterUserInRole()
-        //{
-        //    ViewBag.roles = new SelectList(_roleManager.Roles, "Id", "Name");
-
-        //    return View();
-        //}
-        //[HttpPost]
-        //[AutoValidateAntiforgeryToken]
-        //public async Task<IActionResult> RegisterUserInRole(UserRegisterationVM newUser)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var mapper = AutomapperConfig.InitializeAutoMapper();
-        //        var user = mapper.Map<ApplicationUser>(newUser);
-
-        //        var result = await _userManager.CreateAsync(user, newUser.Password);
-        //        if (result.Succeeded)
-        //        {
-        //            var role = await _roleManager.FindByIdAsync(newUser.RoleId.ToString());
-        //            var RoleAddedRes = await _userManager.AddToRoleAsync(user, role.Name);
-        //            if (RoleAddedRes.Succeeded)
-        //                return Ok("Role Added");
-        //            return View();
-        //        }
-        //        foreach (var error in result.Errors)
-        //        {
-        //            ModelState.AddModelError("", error.Description);
-        //        }
-        //    }
-
-        //    return View();
-        //}
         [HttpGet]
         public IActionResult Login()
         {
@@ -116,7 +83,7 @@ namespace Askify.Controllers
                 }
 
                 await _signInManager.SignInAsync(appUser, newUser.RememberMe);
-                return RedirectToAction("tomyprofile", "enduser");
+                return RedirectToAction("ToTimeline", "enduser");
             }
             ModelState.AddModelError("", "username and password are invalid");
             return RedirectToAction("Login", newUser);

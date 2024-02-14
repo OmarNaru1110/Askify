@@ -97,10 +97,13 @@ namespace Askify.Repositories
         {
             EndUser? user = _context.EndUsers
                 .Include(u => u.SentAnswers)
+                .ThenInclude(x=>x.Question)
                 .FirstOrDefault(x => x.Id == endUserId);
             if (user != null)
             {
-                int answersCount = user.SentAnswers .Count;
+                int answersCount = user.SentAnswers
+                    .Where(x => x.Question.ParentQuestionId == null)
+                    .Count();
                 return answersCount;
             }
             return 0;

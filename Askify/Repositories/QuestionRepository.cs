@@ -72,5 +72,30 @@ namespace Askify.Repositories
             Save();
             return true;
         }
+
+        public Question? GetQuestionChildrenWithTheirAnswers(int parentQuestionId)
+        {
+            return _context.Questions
+                .Include(x => x.Sender)
+                .Include(x => x.Receiver)
+                .Include(x => x.Answers)
+                .Include(x => x.ChildrenQuestions)
+                    .ThenInclude(child => child.Answers)
+                .Include(x => x.ChildrenQuestions)
+                    .ThenInclude(child => child.Sender)
+                .Include(x => x.ChildrenQuestions)
+                    .ThenInclude(child => child.Receiver)
+                .FirstOrDefault(x => x.Id == parentQuestionId);
+        }
+
+        public Question? GetQuestion(int questionId)
+        {
+            return _context.Questions
+                .Include(x => x.Sender)
+                .Include(x => x.Receiver)
+                .Include(x => x.Answers)
+                .Include(x => x.ChildrenQuestions)
+                .FirstOrDefault(x=>x.Id==questionId);
+        }
     }
 }

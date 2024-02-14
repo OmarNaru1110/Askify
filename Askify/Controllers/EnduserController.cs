@@ -16,6 +16,7 @@ namespace Askify.Controllers
         private readonly IQuestionService _questionService;
         private readonly IAnswerService _answerService;
         private readonly ITimelineService _timelineService;
+        private readonly INotificationService _notificationService;
 
         public EnduserController(
             IEnduserService enduserService,
@@ -23,7 +24,8 @@ namespace Askify.Controllers
             IAccountService accountService,
             IQuestionService questionService,
             IAnswerService answerService,
-            ITimelineService timelineService
+            ITimelineService timelineService,
+            INotificationService notificationService
             ) 
         {
             _enduserService = enduserService;
@@ -32,6 +34,17 @@ namespace Askify.Controllers
             _questionService = questionService;
             _answerService = answerService;
             _timelineService = timelineService;
+            _notificationService = notificationService;
+        }
+
+        public async Task<IActionResult> GetWholeAnswer(int? parentQuestionId)
+        {
+            if (parentQuestionId == null)
+                return NotFound("Something went wrong");
+
+            var questions = _questionService.GetQuestionChildrenWithTheirAnswers(parentQuestionId);
+            return View("WholeAnswer", questions);
+
         }
         public async Task<IActionResult> Index()
         {
@@ -69,22 +82,45 @@ namespace Askify.Controllers
 
             return View("Timeline");
         }
-        public async Task<IActionResult> ToAnswer(int? answerId)
+        public async Task<IActionResult> ToAnswer(int? answerId, int? notificationId)
         {
-            if (answerId == null)
+            if (answerId == null || notificationId == null)
                 return NotFound("Answer not found");
+            _notificationService.Edit(notificationId);
             var answer = _answerService.Edit(answerId);
             if (answer == null)
                 return NotFound("Answer not found");
+
+            var question = _questionService.GetQuestion(answer.QuestionId);
+
+            if (question == null)
+                return NotFound("Answer not found");
+
+            var questions = new List<Question>();
+
+            //i am the parent 
+            if (question.ChildrenQuestions != null && question.ChildrenQuestions.Count!=0)
+            {
+                return RedirectToAction("GetWholeAnswer", new { parentQuestionId = question.Id });
+            }
+            //i am a child
+            if(question.ParentQuestionId != null)
+            {
+                return RedirectToAction("GetWholeAnswer", new { parentQuestionId = question.ParentQuestionId});
+            }
+
             return View(answer);
         }
         public async Task<IActionResult> ToNotifications()
         {
+            var myId=_accountService.GetCurrentEndUserId();
+            if (myId == null)
+                return NotFound("something went wrong");
+
+            var notifications = _notificationService.GetNotifications(myId.Value);
             
-            var notifications = _answerService.GetNotifications();
             return View("Notification",notifications);
         }
-
         public async Task<IActionResult> DeleteQuestion(int? id)
         {
             if (id == null)
@@ -97,12 +133,25 @@ namespace Askify.Controllers
         [HttpGet]
         public async Task<IActionResult> AnswerQuestion(int? questionId)
         {
-            var question = _questionService.CreateQuestionWithSenderIncluded(questionId);
-            if (question == null)
+            var question = _questionService.GetQuestion(questionId);
+            if(question == null)
             {
-                return RedirectToAction("ToInbox");
+                return BadRequest("something went wrong");
             }
-            ViewBag.question = question;
+
+            var questions = new List<Question>();
+
+            if (question.ParentQuestionId != null)
+            {
+                questions = _questionService.GetQuestionChildrenWithTheirAnswers(question.ParentQuestionId);
+            }
+            else
+            {
+                questions.Add(question);
+            }
+
+            ViewBag.questionsList = questions;
+            ViewBag.questionId = question.Id;
             return View();
         }
         [HttpPost]
@@ -112,14 +161,13 @@ namespace Askify.Controllers
             var result = _answerService.Add(answer);
             return RedirectToAction("ToInbox");
         }
-        public async Task<IActionResult> AskQuestion(string? text, string? Anonymous)
+        public async Task<IActionResult> AskQuestion(
+            string? text, string? anonymous, int? questionId, int? receiverId)
         {
-            string ? receiverStr = TempData["receiverId"].ToString();
-            var result = int.TryParse(receiverStr, out int receiverId);
-            if (result == false)
+            if (receiverId == null)
                 return BadRequest("something went wrong");
             
-            if(_questionService.SendQuestion(text,Anonymous,receiverId) == false)
+            if(_questionService.SendQuestion(text,anonymous,receiverId.Value,questionId) == false)
             {
                 return BadRequest("something went wrong");
             }

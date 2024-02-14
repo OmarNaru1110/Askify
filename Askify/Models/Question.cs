@@ -13,7 +13,10 @@ namespace Askify.Models
         public bool IsRepliedTo { get; set; } = false;
         public EndUser Sender { get; set; }
         public EndUser Receiver { get; set; }
-        public ICollection<Answer> Answers {  get; set; } 
+        public ICollection<Answer> Answers {  get; set; }
+        public int? ParentQuestionId { get; set; }
+        public Question? ParentQuestion { get; set; }
+        public List<Question>? ChildrenQuestions { get; set; }
 
     }
 }

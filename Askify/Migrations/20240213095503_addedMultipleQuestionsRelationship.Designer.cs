@@ -4,6 +4,7 @@ using Askify.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Askify.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20240213095503_addedMultipleQuestionsRelationship")]
+    partial class addedMultipleQuestionsRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,32 +182,6 @@ namespace Askify.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EndUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Askify.Models.Notification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AnswerId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsSeen")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ReceiverId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnswerId");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Askify.Models.Question", b =>
@@ -420,25 +397,6 @@ namespace Askify.Migrations
                     b.Navigation("EndUser");
                 });
 
-            modelBuilder.Entity("Askify.Models.Notification", b =>
-                {
-                    b.HasOne("Askify.Models.Answer", "Answer")
-                        .WithMany("Notification")
-                        .HasForeignKey("AnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Askify.Models.EndUser", "Receiver")
-                        .WithMany("Notifications")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Answer");
-
-                    b.Navigation("Receiver");
-                });
-
             modelBuilder.Entity("Askify.Models.Question", b =>
                 {
                     b.HasOne("Askify.Models.Question", "ParentQuestion")
@@ -551,8 +509,6 @@ namespace Askify.Migrations
 
             modelBuilder.Entity("Askify.Models.Answer", b =>
                 {
-                    b.Navigation("Notification");
-
                     b.Navigation("UsersLikes");
                 });
 
@@ -562,8 +518,6 @@ namespace Askify.Migrations
                         .IsRequired();
 
                     b.Navigation("LikedAnswers");
-
-                    b.Navigation("Notifications");
 
                     b.Navigation("ReceivedAnswers");
 

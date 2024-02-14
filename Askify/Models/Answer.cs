@@ -12,6 +12,7 @@
         public int QuestionId { get; set; }
         public Question Question { get; set; }
         public bool IsSeen { get; set; }
+        public ICollection<Notification> Notification { get; set; }
         public ICollection<UserAnswerLikes> UsersLikes { get; set; }
 
     }

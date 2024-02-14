@@ -1,6 +1,6 @@
-﻿@{
-    var answers = ViewBag.myAnswers as List<Answer>;
-    int count = 0;
+﻿@model List<Question>?
+@{
+    ViewData["Title"] = "Answer";
 }
 <style>
     @@media (min-width: 0) {
@@ -44,7 +44,7 @@
 
     .media-comment {
         margin-top: 20px;
-        width:150%;
+        width: 150%;
     }
 
     .delete-question {
@@ -68,19 +68,23 @@
         }
 
 </style>
-@if (answers != null)
+@if (Model != null)
 {
 
-    @foreach (var answer in answers)
+    @foreach (var question in Model)
     {
+        if (question.IsRepliedTo == false)
+        {
+            continue;   
+        }
         <div class="container">
-            <div class="row" >
+            <div class="row">
                 <div class="col-md-8">
                     <div class="media g-mb-30 media-comment">
                         <div class="media-body u-shadow-v18 g-bg-secondary g-pa-30">
                             <div class="g-mb-15">
                                 <p>
-                                    @if (answer.Question.IsAnonymous)
+                                    @if (question.IsAnonymous)
                                     {
                                         <h5 class="h5 mb-0" style="color:#FF4F4F">
                                             Anonymous
@@ -88,82 +92,61 @@
                                     }
                                     else
                                     {
-                                        if(answer.Receiver.UserName == User.Identity.Name)
+                                        if (question.Sender.UserName == User.Identity.Name)
                                         {
                                             <a class="profile-Answers" asp-action="tomyprofile">
                                                 <h5 class="h5 mb-0" style="color:#FF4F4F">
-                                                    @answer.Receiver.UserName
+                                                    @question.Sender.UserName
                                                 </h5>
                                             </a>
                                         }
                                         else
                                         {
-                                            <a class="profile-Answers " asp-action="toanotherprofile" asp-route-endUserId="@answer.Receiver.Id">
+                                            <a class="profile-Answers " asp-action="toanotherprofile" asp-route-endUserId="@question.Sender.Id">
                                                 <h5 class="h5 mb-0" style="color:#FF4F4F">
-                                                    @answer.Receiver.UserName
+                                                    @question.Sender.UserName
                                                 </h5>
                                             </a>
                                         }
                                     }
-                                    <span style="color:white" class="g-font-size-12"> @answer.Question.CreatedDate </span>
+                                    <span style="color:white" class="g-font-size-12"> @question.CreatedDate </span>
                                 </p>
                             </div>
-                            <p style="color:white" >
-                                @answer.Question.Text
+                            <p style="color:white">
+                                @question.Text
                             </p>
                         </div>
                         <div class="media-body u-shadow-v18 g-bg-secondary g-pa-30">
                             <div class="g-mb-15">
                                 <p>
-                                    @if(answer.Sender.UserName == User.Identity.Name)
+                                    @if (question.Answers.FirstOrDefault()?.Sender.UserName == User.Identity.Name)
                                     {
                                         <a class="profile-Answers" asp-action="tomyprofile">
                                             <span class="h5 mb-0" style="color:#80FF4E">
-                                                @answer.Sender.UserName
+                                                @User.Identity.Name
                                             </span>
                                         </a>
                                     }
                                     else
                                     {
-                                        <a class="profile-Answers " asp-action="toanotherprofile" asp-route-endUserId="@answer.Sender.Id">
+                                        <a class="profile-Answers " asp-action="toanotherprofile" asp-route-endUserId="@question.Receiver.Id">
                                             <span class="h5 mb-0" style="color:#80FF4E">
-                                                @answer.Sender.UserName
+                                                @question.Answers.FirstOrDefault()?.Sender.UserName
                                             </span>
                                         </a>
                                     }
                                     <br />
-                                    <span style="color:white" class="g-font-size-12"> @answer.CreatedDate </span>
+                                    <span style="color:white" class="g-font-size-12"> @question.Answers.FirstOrDefault()?.CreatedDate </span>
                                 </p>
                             </div>
                             <p style="color:white">
-                                @answer.Text
+                                @question.Answers.FirstOrDefault()?.Text
                             </p>
-                            @if (answer.Question.ChildrenQuestions != null && answer.Question.ChildrenQuestions.Count != 0)
-                            {
-                                count = 1;
-                                foreach (var item in answer.Question.ChildrenQuestions)
-                                {
-                                    if (item.IsRepliedTo == true)
-                                        count++;
-                                }
-                                if (count > 0)
-                                {
-                                    <p style="color:orange; font-weight:500">
-                                        <a asp-controller="enduser" asp-action="GetWholeAnswer" asp-route-parentQuestionId="@answer.QuestionId" class="profile-Answers">
-                                            See @count answers
-                                        </a>
-                                    </p>
-                                }
-                            }
 
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        @if(answer.Sender.UserName != User.Identity.Name)
-        {
-            <partial name="Shared/_AskQuestionForm" model="answer" />
-        }
     }
 }

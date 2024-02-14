@@ -4,6 +4,7 @@ using Askify.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Askify.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20240214121008_v1")]
+    partial class v1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -200,7 +203,8 @@ namespace Askify.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnswerId");
+                    b.HasIndex("AnswerId")
+                        .IsUnique();
 
                     b.HasIndex("ReceiverId");
 
@@ -423,15 +427,15 @@ namespace Askify.Migrations
             modelBuilder.Entity("Askify.Models.Notification", b =>
                 {
                     b.HasOne("Askify.Models.Answer", "Answer")
-                        .WithMany("Notification")
-                        .HasForeignKey("AnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithOne("Notification")
+                        .HasForeignKey("Askify.Models.Notification", "AnswerId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Askify.Models.EndUser", "Receiver")
                         .WithMany("Notifications")
                         .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Answer");
@@ -551,7 +555,8 @@ namespace Askify.Migrations
 
             modelBuilder.Entity("Askify.Models.Answer", b =>
                 {
-                    b.Navigation("Notification");
+                    b.Navigation("Notification")
+                        .IsRequired();
 
                     b.Navigation("UsersLikes");
                 });

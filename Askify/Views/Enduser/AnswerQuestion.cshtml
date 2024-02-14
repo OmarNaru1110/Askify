@@ -1,7 +1,8 @@
 ﻿@model AnswerQuestionVm
 @{
     ViewData["Title"] = "AnswerQuestion";
-    var q = ViewBag.question as Question;
+    var questions = ViewBag.questionsList as List<Question>;
+    int questionId = ViewBag.questionId;
 }
 <style>
     @@media (min-width: 0) {
@@ -62,46 +63,77 @@
         }
 
 </style>
-<div class="list-group">
-        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="media g-mb-30 media-comment">
-                        <div class="media-body u-shadow-v18 g-bg-secondary g-pa-30">
-                            <div class="g-mb-15">
-                                @if (q.IsAnonymous)
-                                {
-                                    <h5 class="h5 g-color-gray-dark-v1 mb-0">
-                                        Anonymous
-                                    </h5>
-                                }
-                                else
-                                {
-                                    <h5 class="h5 g-color-gray-dark-v1 mb-0">
-                                        @q.Sender.UserName
-                                    </h5>
-                                }
-                                <span class="g-color-gray-dark-v4 g-font-size-12"> @q.CreatedDate </span>
-                            </div>
-                            <p>
-                                @q.Text
-                            </p>
-                        </div>
-                    </div>
-                <form asp-controller="enduser" asp-action="AnswerQuestion" class="w-100" method="post">
-                    <textarea required asp-for="AnswerText" style="resize:none; height: 150px;" placeholder="Answer Here..." class="form-control"></textarea>
-                    <input hidden asp-for="QuestionId" value="@q.Id" />
-                    <input hidden asp-for="AnswerReceiverId" value="@q.SenderId" />
 
-                    <div class="mt-3">
-                        <input class="btn btn-warning" type="submit" value="Answer" />
+@if (questions != null)
+{
+    foreach (var q in questions)
+    {
+        <div class="list-group">
+            <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="media g-mb-30 media-comment">
+                            <div class="media-body u-shadow-v18 g-bg-secondary g-pa-30">
+                                <div class="g-mb-15">
+                                    @if (q.IsAnonymous)
+                                    {
+                                        <h5 class="h5 g-color-gray-dark-v1 mb-0">
+                                            Anonymous
+                                        </h5>
+                                    }
+                                    else
+                                    {
+                                        <h5 class="h5 g-color-gray-dark-v1 mb-0">
+                                            @q.Sender.UserName
+                                        </h5>
+                                    }
+                                    <span class="g-color-gray-dark-v4 g-font-size-12"> @q.CreatedDate </span>
+                                </div>
+                                <p>
+                                    @q.Text
+                                </p>
+                            </div>
+                        </div>
+                        @*answer*@
+                        @if (q.Id != questionId)
+                        {
+                            <div class="media-body u-shadow-v18 g-bg-secondary g-pa-30">
+                                <div class="g-mb-15">
+                                    <h5 class="h5 g-color-gray-dark-v1 mb-0">
+                                        You
+                                    </h5>
+                                    <span class="g-color-gray-dark-v4 g-font-size-12"> @q.Answers.FirstOrDefault()?.CreatedDate </span>
+                                </div>
+                                <p>
+                                    @q.Answers.FirstOrDefault()?.Text
+                                </p>
+                            </div>
+                        }
+
+                        @if (q.Id == questionId)
+                        {
+                            <form asp-controller="enduser" asp-action="AnswerQuestion" class="w-100" method="post">
+                                <textarea required asp-for="AnswerText" style="resize:none; height: 150px;" placeholder="Answer Here..." class="form-control"></textarea>
+                                <input hidden asp-for="QuestionId" value="@q.Id" />
+                                <input hidden asp-for="AnswerReceiverId" value="@q.SenderId" />
+
+                                <div class="mt-3">
+                                    <input class="btn btn-warning" type="submit" value="Answer" />
+                                </div>
+                                <br />
+                                <br />
+                            </form>
+                        }
                     </div>
-                    <br />
-                    <br />
-                </form>
                 </div>
             </div>
-    </div>
-</div>
+        </div>
+        if (q.Id == questionId)
+        {
+            break;
+        }
+
+    }
+}
 

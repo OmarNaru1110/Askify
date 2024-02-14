@@ -12,6 +12,8 @@
         public ICollection<Answer> SentAnswers { get; set; }
         public ICollection<Answer> ReceivedAnswers{ get; set; }
         public ICollection<UserAnswerLikes> LikedAnswers { get; set; }
+        public ICollection<Notification> Notifications { get; set; }
+
         public AppUser IdentityUser { get; set; }
     }
 }

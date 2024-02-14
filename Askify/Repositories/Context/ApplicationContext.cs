@@ -41,6 +41,10 @@ namespace Askify.Repositories.Context
                 .HasForeignKey(c => c.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+                q.HasOne(x => x.ParentQuestion)
+                .WithMany(x => x.ChildrenQuestions)
+                .HasForeignKey(x => x.ParentQuestionId);
+
             });
             
             builder.Entity<Answer>(a =>
@@ -75,11 +79,28 @@ namespace Askify.Repositories.Context
                 .HasForeignKey(x => x.UserId);
             });
 
+            builder.Entity<Notification>(x =>
+            {
+                x.HasKey(x => x.Id);
+
+                x.HasOne(x => x.Answer)
+                .WithMany(x => x.Notification)
+                .HasForeignKey(x => x.AnswerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+                x.HasOne(x => x.Receiver)
+                .WithMany(x => x.Notifications)
+                .HasForeignKey(x => x.ReceiverId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            });
+
             base.OnModelCreating(builder);
         }
         public DbSet<EndUser> EndUsers { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
         public DbSet<UserAnswerLikes> UserAnswerLikes { get; set; }
     }
 }

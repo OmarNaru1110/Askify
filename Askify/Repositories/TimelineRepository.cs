@@ -20,7 +20,9 @@ namespace Askify.Repositories
             var followingAnswers = _context.EndUsers
                 .Where(u => u.Id == endUserId)
                 .SelectMany(u => u.Following.SelectMany(f => f.SentAnswers))
+                .Where(x => x.Question.ParentQuestionId == null)
                 .Include(answer => answer.Question)
+                .ThenInclude(x => x.ChildrenQuestions)
                 .Include(answer => answer.Sender)
                 .Include(answer => answer.Receiver)
                 .OrderByDescending(x=>x.CreatedDate)
@@ -34,6 +36,7 @@ namespace Askify.Repositories
             return _context.EndUsers
                 .Where(u => u.Id == userId)
                 .SelectMany(u => u.Following.SelectMany(f => f.SentAnswers))
+                .Where(x=>x.Question.ParentQuestionId==null)
                 .Count();
         }
     }

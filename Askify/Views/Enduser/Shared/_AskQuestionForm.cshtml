@@ -1,0 +1,59 @@
+﻿@model Answer?
+<style>
+    /* Optional: Add some styling to make it visually appealing */
+    .ask-question {
+        background-color: #6B6B6B;
+        color: white;
+        width: 100%;
+        height: 150px;
+        padding: 10px;
+        box-sizing: border-box;
+        resize: none; /* Disable textarea resizing */
+    }
+
+        .ask-question::placeholder {
+            color: #DCDCDC;
+        }
+
+    .char-counter {
+        position: absolute;
+        left: 10px;
+        color: white; /* Adjust the color as needed */
+        font-size: 14px; /* Adjust the font size as needed */
+    }
+
+    .ask-form {
+        position: relative;
+    }
+
+</style>
+
+    <div style="background-color:#6B6B6B; width:1260px; margin-left:12px">
+        <form asp-route-receiverId="@Model?.SenderId"  asp-route-questionId="@Model?.QuestionId" asp-controller="enduser" asp-action="AskQuestion" class="ask-form">
+            <textarea required id="largeTextArea" name="text" class="ask-question" placeholder="Ask me anything!" maxlength="4000"></textarea>
+            <br />
+            <div class="char-counter">0/4000</div>
+            <br />
+            <div style="margin-left:7px; display:inline-block" class="form-check form-switch text-white">
+                <input name="anonymous" class="form-check-input" type="checkbox">
+                <label class="form-check-label"> Anonymous </label>
+            </div>
+            <div style="display:inline-block; margin-left:1020px">
+                <input class="btn btn-warning" type="submit" value="Ask" />
+            </div>
+            <br />
+            <br />
+        </form>
+    </div>
+
+
+
+<script>
+    // Add JavaScript to update character count
+    const textArea = document.getElementById('largeTextArea');
+    const charCounter = document.querySelector('.char-counter');
+
+    textArea.addEventListener('input', function () {
+        charCounter.textContent = `${textArea.value.length}/4000`;
+    });
+</script>

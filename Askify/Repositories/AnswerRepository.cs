@@ -21,10 +21,11 @@ namespace Askify.Repositories
         public List<Answer>? GetUserAnswers(int endUserId, int page, int size)
         {
             return _context.Answers
-                  .Where(x => x.SenderId == endUserId)
+                  .Where(x => x.SenderId == endUserId && x.Question.ParentQuestionId==null)
                   .Include(x => x.Sender)
                   .Include(x => x.Receiver)
                   .Include(x => x.Question)
+                  .ThenInclude(x=>x.ChildrenQuestions)
                   .OrderByDescending(x => x.CreatedDate)
                   .Skip((page-1) * size).Take(size)
                   .ToList();
@@ -42,15 +43,6 @@ namespace Askify.Repositories
                 .Include(x=>x.Receiver)
                 .FirstOrDefault(x=>x.Id==answerId);
         }
-
-        public List<Answer> GetNotifications(int endUserId)
-        {
-           return _context.Answers.Include(x => x.Question)
-                .Include(x=>x.Sender)
-                .Where(x => x.ReceiverId == endUserId)
-                .OrderByDescending(x => x.CreatedDate).ToList();   
-        }
-
         public void Save()
         {
             _context.SaveChanges();
