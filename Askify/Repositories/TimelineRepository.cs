@@ -20,6 +20,7 @@ namespace Askify.Repositories
             var followingAnswers = _context.EndUsers
                 .Where(u => u.Id == endUserId)
                 .SelectMany(u => u.Following.SelectMany(f => f.SentAnswers))
+                .Include(x=>x.UsersLikes)
                 .Where(x => x.Question.ParentQuestionId == null)
                 .Include(answer => answer.Question)
                 .ThenInclude(x => x.ChildrenQuestions)

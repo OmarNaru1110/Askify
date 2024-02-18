@@ -44,6 +44,8 @@ namespace Askify
             builder.Services.AddScoped<ITimelineService, TimelineService>();
             builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IUserAnswerLikesRepository, UserAnswerLikesRepository>();
+            builder.Services.AddScoped<IUserAnswerLikesService, UserAnswerLikesService>();
 
             var app = builder.Build();
 

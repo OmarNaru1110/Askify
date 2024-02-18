@@ -68,11 +68,16 @@
         }
 
 </style>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
 @if (answers != null)
 {
 
     @foreach (var answer in answers)
     {
+        int numberOfLikes = answer.UsersLikes.Count();
+
         <div class="container">
             <div class="row" >
                 <div class="col-md-8">
@@ -150,20 +155,58 @@
                                 {
                                     <p style="color:orange; font-weight:500">
                                         <a asp-controller="enduser" asp-action="GetWholeAnswer" asp-route-parentQuestionId="@answer.QuestionId" class="profile-Answers">
-                                            See @count answers
+                                            See @(count-1) answers
                                         </a>
                                     </p>
                                 }
                             }
-
+                            <a href="#" class="profile-Answers" data-answer-id="@answer.Id">
+                                <i class="fa fa-thumbs-up" style="font-size: xx-large; color:#5795FF"></i>
+                            </a>
+                            <span style="color:white">
+                                @numberOfLikes likes
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+
+        
         @if(answer.Sender.UserName != User.Identity.Name)
         {
             <partial name="Shared/_AskQuestionForm" model="answer" />
         }
     }
 }
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.profile-Answers').click(function (e) {
+            e.preventDefault();
+
+            var answerId = $(this).data('answer-id');
+            var likesCountElement = $(this).find('.likes-count');
+
+            $.ajax({
+                url: '@Url.Action("ManageLikes", "enduser")',
+                type: 'POST',
+                data: { answerId: answerId },
+                success: function (data) {
+                    if (data.success) {
+                        // Update the UI with the new likes count
+                        likesCountElement.text(data.likesCount);
+                    } else {
+                        // Handle error, if needed
+                        console.log(data.errorMessage);
+                    }
+                },
+                error: function (error) {
+                    // Handle error, if needed
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>

@@ -22,6 +22,7 @@ namespace Askify.Repositories
         {
             return _context.Answers
                   .Where(x => x.SenderId == endUserId && x.Question.ParentQuestionId==null)
+                  .Include(x=>x.UsersLikes)
                   .Include(x => x.Sender)
                   .Include(x => x.Receiver)
                   .Include(x => x.Question)

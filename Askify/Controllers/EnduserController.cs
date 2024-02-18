@@ -17,6 +17,7 @@ namespace Askify.Controllers
         private readonly IAnswerService _answerService;
         private readonly ITimelineService _timelineService;
         private readonly INotificationService _notificationService;
+        private readonly IUserAnswerLikesService _userAnswerLikesService;
 
         public EnduserController(
             IEnduserService enduserService,
@@ -25,7 +26,8 @@ namespace Askify.Controllers
             IQuestionService questionService,
             IAnswerService answerService,
             ITimelineService timelineService,
-            INotificationService notificationService
+            INotificationService notificationService,
+            IUserAnswerLikesService userAnswerLikesService
             ) 
         {
             _enduserService = enduserService;
@@ -35,6 +37,7 @@ namespace Askify.Controllers
             _answerService = answerService;
             _timelineService = timelineService;
             _notificationService = notificationService;
+            _userAnswerLikesService = userAnswerLikesService;
         }
 
         public async Task<IActionResult> GetWholeAnswer(int? parentQuestionId)
@@ -276,11 +279,33 @@ namespace Askify.Controllers
             var following = _enduserService.GetFollowingList(endUserId);
             return View(following);
         }
+        public JsonResult ManageLikes(int? answerId)
+        {
+            if (answerId == null)
+            {
+                return Json(new { success = false, errorMessage = "Invalid answerId" });
+            }
+
+            var userId = _accountService.GetCurrentEndUserId();
+            if (userId == null)
+            {
+                return Json(new { success = false, errorMessage = "User not authenticated" });
+            }
+
+            // _userAnswerLikesService.Manage method returns the updated likes count
+            var updatedLikesCount = _userAnswerLikesService.Manage(answerId.Value, userId.Value);
+
+            // Return the updated likes count
+            return Json(new { success = true, likesCount = updatedLikesCount });
+        }
+
         public async Task<IActionResult> GetFollowers(int endUserId)
         {
             var followers = _enduserService.GetFollowersList(endUserId);
             return View(followers);
         }
+
+        
 
     }
 }
