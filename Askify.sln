@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Askify", "Askify\Askify.csproj", "{0095E5E7-6F9A-4682-BD90-E1FB109C7073}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Askify", "Askify\Askify.csproj", "{0095E5E7-6F9A-4682-BD90-E1FB109C7073}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Askify.Tests", "Askify.Tests\Askify.Tests.csproj", "{A8A1A2D5-297C-4DCE-9DF0-086E7A408A5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{0095E5E7-6F9A-4682-BD90-E1FB109C7073}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0095E5E7-6F9A-4682-BD90-E1FB109C7073}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0095E5E7-6F9A-4682-BD90-E1FB109C7073}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8A1A2D5-297C-4DCE-9DF0-086E7A408A5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8A1A2D5-297C-4DCE-9DF0-086E7A408A5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8A1A2D5-297C-4DCE-9DF0-086E7A408A5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8A1A2D5-297C-4DCE-9DF0-086E7A408A5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
