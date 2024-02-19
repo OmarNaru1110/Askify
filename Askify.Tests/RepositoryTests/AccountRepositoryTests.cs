@@ -65,6 +65,26 @@ namespace Askify.Tests.RepositoryTests
 
             Assert.That(userId, Is.EqualTo(123));
         }
+        [Test]
+        public async Task GetCurrentEndUserId_returnsNull()
+        {
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
+            var claims = new Claim[]
+            {
+                new Claim("EndUserId", "123")
+            };
+            var identity = new ClaimsIdentity(claims);
+            var principal = new ClaimsPrincipal(identity);
+            httpContextAccessor.Setup(x => x.HttpContext.User)
+                .Returns(principal);
+            _userManager.Setup(x => x.GetUserAsync(principal))
+                .ReturnsAsync((AppUser)null);
 
+            var accountRepository = new AccountRepository(httpContextAccessor.Object, _userManager.Object);
+
+            var userId = await accountRepository.GetCurrentEndUserId();
+
+            Assert.That(userId, Is.Null);
+        }
     }
 }
