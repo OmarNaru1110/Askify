@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Askify\Askify.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ServiceTests\" />
+  </ItemGroup>
+
 </Project>

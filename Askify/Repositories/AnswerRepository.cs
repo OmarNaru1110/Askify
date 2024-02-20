@@ -20,16 +20,17 @@ namespace Askify.Repositories
 
         public List<Answer>? GetUserAnswers(int endUserId, int page, int size)
         {
-            return _context.Answers
+             var list = _context.Answers
                   .Where(x => x.SenderId == endUserId && x.Question.ParentQuestionId==null)
-                  .Include(x=>x.UsersLikes)
+                  .Include(x => x.UsersLikes)
                   .Include(x => x.Sender)
                   .Include(x => x.Receiver)
                   .Include(x => x.Question)
-                  .ThenInclude(x=>x.ChildrenQuestions)
+                  .ThenInclude(x => x.ChildrenQuestions)
                   .OrderByDescending(x => x.CreatedDate)
                   .Skip((page-1) * size).Take(size)
                   .ToList();
+            return list;
         }
         public void Add(Answer answer)
         {
