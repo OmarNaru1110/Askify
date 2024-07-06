@@ -18,16 +18,6 @@ Askify is an ASP.NET Core MVC web application designed for social interactions t
 
 Check out the demo video to see Askify in action: [Askify Demo](https://www.linkedin.com/feed/update/urn:li:activity:7163608303573438464/)
 
-## Screenshots
-
-Here are some screenshots from Askify:
-
-<img title="a title" alt="Alt text" src="/Askify/images/1.png">
-<img title="a title" alt="Alt text" src="/Askify/images/2.png">
-<img title="a title" alt="Alt text" src="/Askify/images/3.png">
-<img title="a title" alt="Alt text" src="/Askify/images/4.png">
-<img title="a title" alt="Alt text" src="/Askify/images/5.png">
-
 ## Technologies Used
 
 - ASP.NET Core MVC
